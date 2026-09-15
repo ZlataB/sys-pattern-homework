@@ -24,26 +24,44 @@
 
 ### Задание 1
 
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
-```
+1. Скачивание и распаковка архива (kafka_deploy.yml)
+Используем встроенный модуль get_url для скачивания, file для папки и unarchive для распаковки.
 Поле для вставки кода...
-....
-....
-....
-....
-```
+---
+- name: Download and unpack Apache Kafka
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure download directory exists
+      ansible.builtin.file:
+        path: /opt/kafka_dist
+        state: directory
+        mode: '0755'
+
+    - name: Download Apache Kafka archive
+      ansible.builtin.get_url:
+        url: https://apache.org
+        dest: /opt/kafka_dist/kafka.tgz
+        mode: '0644'
+
+    - name: Ensure extraction directory exists
+      ansible.builtin.file:
+        path: /opt/kafka
+        state: directory
+        mode: '0755'
+
+    - name: Unpack Kafka archive
+      ansible.builtin.unarchive:
+        src: /opt/kafka_dist/kafka.tgz
+        dest: /opt/kafka
+        remote_src: true
 
 `При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
+<img width="1426" height="1136" alt="image" src="https://github.com/user-attachments/assets/4a498af6-aad2-40bb-8f4a-93b55fe291b5" />
 
+2. Установка и запуск демона tuned (tuned_setup.yml) 
+Используем модуль apt и модуль service для автозапуска.
+Поле для вставки кода...
 
 ---
 
