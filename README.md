@@ -26,7 +26,8 @@
 
 1. Скачивание и распаковка архива (kafka_deploy.yml)
 Используем встроенный модуль get_url для скачивания, file для папки и unarchive для распаковки.
-Поле для вставки кода...
+
+Код...
 ---
 - name: Download and unpack Apache Kafka
   hosts: all
@@ -61,7 +62,8 @@
 
 2. Установка и запуск демона tuned (tuned_setup.yml) 
 Используем модуль apt и модуль service для автозапуска.
-Поле для вставки кода...
+
+Код...
 ---
 - name: Install and enable tuned daemon
   hosts: all
@@ -85,7 +87,7 @@
 3. Изменение приветствия системы через переменную (motd_variable.yml)
 Используем модуль copy и переменную custom_motd:
 
-Поле для вставки кода...
+Код...
 ---
 - name: Change system MOTD greeting using variable
   hosts: all
