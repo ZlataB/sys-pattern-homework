@@ -62,6 +62,45 @@
 2. Установка и запуск демона tuned (tuned_setup.yml) 
 Используем модуль apt и модуль service для автозапуска.
 Поле для вставки кода...
+---
+- name: Install and enable tuned daemon
+  hosts: all
+  become: true
+  tasks:
+    - name: Install tuned package
+      ansible.builtin.apt:
+        name: tuned
+        state: present
+        update_cache: true
+
+    - name: Start and enable tuned service
+      ansible.builtin.service:
+        name: tuned
+        state: started
+        enabled: true
+
+`При необходимости прикрепитe сюда скриншоты
+<img width="1433" height="677" alt="image" src="https://github.com/user-attachments/assets/6c2725ba-3302-412d-8d3e-a862333aba75" />
+
+3. Изменение приветствия системы через переменную (motd_variable.yml)
+Используем модуль copy и переменную custom_motd:
+
+Поле для вставки кода...
+---
+- name: Change system MOTD greeting using variable
+  hosts: all
+  become: true
+  vars:
+    custom_motd: "Welcome to Netology DevOps DevOps environment!\n"
+  tasks:
+    - name: Update /etc/motd file
+      ansible.builtin.copy:
+        content: "{{ custom_motd }}"
+        dest: /etc/motd
+        mode: '0644'
+
+`При необходимости прикрепитe сюда скриншоты
+<img width="1413" height="637" alt="image" src="https://github.com/user-attachments/assets/05ba20e1-926e-40c6-8a8f-7ab8005de252" />
 
 ---
 
