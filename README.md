@@ -142,22 +142,53 @@
 ### Задание 3
 
 `Создание Ansible-роли для Apache`
+Для комплексной автоматизации веб-инфраструктуры была разработана изолированная Ansible-роль apache_monitor.
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+Структура роли и проделанные действия:
+1) Установка и автозапуск: Через модуль apt установлен веб-сервер apache2. Служба переведена в состояние started и добавлена в автозагрузку.
+2) Динамический шаблон (templates/index.html.j2): Разработан шаблон Jinja2, выводящий ключевые аппаратные метрики хоста:
+{{ ansible_memtotal_mb }} — объем оперативной памяти.
+{{ ansible_processor_vcpus }} — количество ядер CPU.
+{{ ansible_devices.sda.size }} — объем первого системного диска.
 
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor</title>
+</head>
+<body>
+    <h1>System Characteristics for {{ ansible_hostname }}</h1>
+    <ul>
+        <li><strong>IP Address:</strong> {{ ansible_default_ipv4.address }}</li>
+        
+        <li><strong>CPU Model:</strong> 
+        {% if ansible_processor|length > 1 %}
+            {{ ansible_processor[1] }}
+        {% else %}
+            {{ ansible_processor[0] | default('Generic CPU') }}
+        {% endif %}
+        ({{ ansible_processor_vcpus }} vCPUs)</li>
+        
+        <li><strong>Total RAM:</strong> {{ ansible_memtotal_mb }} MB</li>
+        
+        <li><strong>First HDD Size:</strong> 
+        {% if ansible_devices.sda is defined %}
+            {{ ansible_devices.sda.size }}
+        {% elif ansible_devices.vda is defined %}
+            {{ ansible_devices.vda.size }}
+        {% else %}
+            Unknown Size
+        {% endif %}
+        </li>
+    </ul>
+</body>
+</html>
 ```
+3) Обработчики (Handlers): В каталоге handlers/main.yml настроен триггер Restart apache service. Перезапуск службы apache2 происходит только в случае физического изменения контента или структуры файла index.html.
+4) Безопасность и проверка: Настроен сетевой экран UFW (модуль community.general.ufw) на пропуск трафика по порту 80/tcp. Добавлена финальная самодиагностика доступности веб-страницы через модуль ansible.builtin.uri с ожиданием HTTP-статуса 200 OK.
 
 `При необходимости прикрепитe сюда скриншоты
 <img width="2119" height="1075" alt="image" src="https://github.com/user-attachments/assets/1f50a454-ec46-4270-8117-8017edd9df81" />
-`
+
+Вся разработанная структура плейбуков и ролей успешно протестирована на локальном хосте (Ubuntu). Сценарии завершились со статусом failed=0, конфигурация успешно применена.
