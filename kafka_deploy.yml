@@ -1,0 +1,28 @@
+---
+- name: Download and unpack Apache Kafta
+  hosts: all
+  become: true
+  tasks:
+    - name: Ensure download directory exists
+      ansible.builtin.file:
+        path: /opt/kafta_dist
+        state: directory
+        mode: '0755'
+
+    - name: Download Apache Kafka archive
+      ansible.builtin.get_url:
+        url: https://apache.org
+        dest: /opt/kafka_dist/kafka.tgz
+        mode: '0644'
+
+    - name: Ensure extraction directory exists
+      ansible.builtin.file:
+        path: /opt/kafka
+        state: directory
+        mode: '0755'
+
+    - name: Unpack Kafka archive
+      ansible.builtin.unarchive:
+        src: /opt/kafka_dist/kafka.tgz
+        dest: /opt/kafka
+        remote_src: true

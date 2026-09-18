@@ -1,0 +1,36 @@
+---
+# tasks file for roles/apache_monitor
+- name: Install Apache HTTP Server
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: true
+
+- name: Deploy index.html from Jinja2 template
+  ansible.builtin.template:
+      src: index.html.j2
+      dest: /var/www/html/index.html
+      mode: '0644'
+  notify: Restart apache service
+
+- name: Open HTTP port 80 in UFW firewall
+  community.general.ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+
+- name: Ensure Apache is started and enabled
+  ansible.builtin.service:
+      name: apache2
+      state: started
+      enabled: true
+
+- name: Check website availability (Status 200)
+  ansible.builtin.uri:
+      url: "http://localhost"
+      status_code: 200
+  register: web_check
+
+- name: Print verificaton status
+  ansible.builtin.debug:
+      msg: "Website is accessible! Status: {{ web_check.status }}"

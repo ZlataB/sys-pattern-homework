@@ -1,0 +1,16 @@
+---
+- name: Configure dynamic MOTD with host facts
+  hosts: all
+  become: true
+  tasks:
+    - name: Generate dynamic MOTD greeting
+      ansible.builtin.copy:
+        content: |
+          ===================================================
+          Welcome to server: {{ ansible_hostname }}
+          Server IP Adress: {{ ansible_default_ipv4.address }}
+          ---------------------------------------------------
+          Have a Wonderful Day, dear System Administrator!
+          ==================================================
+        dest: /etc/motd
+        mode: '0644'

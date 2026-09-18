@@ -1,0 +1,6 @@
+---
+- name: Deploy monitored Apache web server using custom role
+  hosts: all
+  become: true
+  roles:
+    - apache_monitor
